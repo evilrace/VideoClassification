@@ -61,6 +61,7 @@ class VideoDataSet(torch.utils.data.Dataset):
                 output_features = output_features.to('cpu')
                 output_features = torch.reshape(output_features,(output_features.shape[0],output_features.shape[1]))
                 self.cached[idx] = (output_features,label)
+                
         return self.cached[idx]
     def __len__(self):
         return self.data_csv.shape[0]
