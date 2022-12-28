@@ -30,17 +30,20 @@ class VideoDataSet(torch.utils.data.Dataset):
         super().__init__()
         self.features = {}
         self.resnet = torchvision.models.resnet50().to('cuda')
-        self.resnet.avgpool.register_forward_hook(get_features(self.features, 'fc'))
+        self.hook = get_features(self.features, 'fc')
+        self.resnet.avgpool.register_forward_hook(self.hook)
         self.resnet.eval()
         self.transforms = torchvision.transforms.Compose([
             torchvision.transforms.Lambda(lambda x : x/255.),
         ]
         )
+
         self.seq_num = 20
         if data_type == 'train':
             self.data_csv = train_data_csv
         elif data_type == 'test':
             self.data_csv = test_data_csv
+        self.labels = list(set(self.data_csv['tag']))
         self.cached = {}
 
     def __getitem__(self, idx):
@@ -50,7 +53,8 @@ class VideoDataSet(torch.utils.data.Dataset):
             frame,_,_ = torchvision.io.read_video(img_path)
             with torch.no_grad():
                 frame = frame.permute(0,3,1,2).to('cuda')
-                frame = self.transforms(frame[::5])
+                frame = self.transforms(frame[::10])
+                frame = frame[:20,:]
                 frame = frame.float()    
                 self.resnet(frame)
                 output_features = self.features['fc']
@@ -60,5 +64,8 @@ class VideoDataSet(torch.utils.data.Dataset):
         return self.cached[idx]
     def __len__(self):
         return self.data_csv.shape[0]
+
+    def get_label(self):
+        return self.labels
 
 
