@@ -29,7 +29,7 @@ class VideoDataSet(torch.utils.data.Dataset):
     def __init__(self, data_type) -> None:
         super().__init__()
         self.features = {}
-        self.resnet = torchvision.models.resnet50().to('cuda')
+        self.resnet = torchvision.models.resnet50(weights=torchvision.models.ResNet50_Weights.IMAGENET1K_V2).to('cuda')
         self.hook = get_features(self.features, 'fc')
         self.resnet.avgpool.register_forward_hook(self.hook)
         self.resnet.eval()
