@@ -10,7 +10,6 @@ class CNNRNN(torch.nn.Module):
 
     def forward(self, x):
         x, _ = self.lstm(x)
-        x = x[:,-1,:]
         x = self.logits(x)
         x = self.dense(x)
         x = self.softmax(x)
