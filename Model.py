@@ -6,7 +6,8 @@ class CNNRNN(torch.nn.Module):
         self.lstm = torch.nn.LSTM(2048, 512, 3, batch_first = True)
         self.logits = torch.nn.ReLU()
         self.dense = torch.nn.Linear(512, class_num)
-        self.softmax = torch.nn.Softmax(1)
+        self.softmax = torch.nn.Softmax(-1)
+        self.class_num = class_num
 
     def forward(self, x):
         x, _ = self.lstm(x)
