@@ -3,7 +3,7 @@ class CNNRNN(torch.nn.Module):
 
     def __init__(self, class_num) -> None:
         super().__init__()
-        self.lstm = torch.nn.LSTM(2048, 512, 3, batch_first = True)
+        self.lstm = torch.nn.LSTM(2048, 512, 1, batch_first = True)
         self.logits = torch.nn.ReLU()
         self.dense = torch.nn.Linear(512, class_num)
         self.softmax = torch.nn.Softmax(-1)
@@ -15,5 +15,3 @@ class CNNRNN(torch.nn.Module):
         x = self.dense(x)
         x = self.softmax(x)
         return x
-        
-        
